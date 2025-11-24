@@ -5,16 +5,14 @@ package aoomath.Chamado_Service.service;
 import aoomath.Chamado_Service.dto.comentario.ComentarioMapper;
 import aoomath.Chamado_Service.dto.comentario.ComentarioRequestDTO;
 import aoomath.Chamado_Service.dto.comentario.ComentarioResponseDTO;
-import aoomath.Chamado_Service.exception.AcessoNegadoException;
 import aoomath.Chamado_Service.exception.RecursoNaoEncontradoException;
-import aoomath.Chamado_Service.exception.RequisicaoInvalidaException;
 import aoomath.Chamado_Service.model.Chamado;
 import aoomath.Chamado_Service.model.Comentario;
-import aoomath.Chamado_Service.model.Status;
 import aoomath.Chamado_Service.rabbit.dto.NotificacaoMessage;
 import aoomath.Chamado_Service.rabbit.service.NotificacaoProducer;
 import aoomath.Chamado_Service.repository.ChamadoRepository;
 import aoomath.Chamado_Service.repository.ComentarioRepository;
+import aoomath.Chamado_Service.validator.ChamadoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +30,8 @@ public class ComentarioService {
     private final ChamadoRepository chamadoRepository;
     private final ComentarioMapper mapper;
     private final NotificacaoProducer notificacaoProducer;
+    private final ChamadoValidator validator;
+
 
 
 
@@ -40,13 +40,8 @@ public class ComentarioService {
         Chamado chamado = chamadoRepository.findById(chamadoId)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Chamado não encontrado"));
 
-        if(!chamado.getStatus().equals(Status.EM_TRATATIVA)){
-            throw new RequisicaoInvalidaException("Status atual do chamado não permite fazer comentários.");
-        }
+        validator.validarAcessoDoTecnico(chamado, UUID.fromString(id));
 
-        if(!chamado.getTecnicoId().equals(UUID.fromString(id))){
-            throw new AcessoNegadoException("Você não tem permissão para salvar este comentário. Por gentileza assuma o chamado primeiro");
-        }
 
         Comentario comentario = mapper.toEntity(dto);
         comentario.setChamado(chamado);
@@ -96,12 +91,8 @@ public class ComentarioService {
         Comentario comentario = comentarioRepository.findById(comentarioId)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Comentario não encontrado"));
 
-        if(!comentario.getChamado().getStatus().equals(Status.EM_TRATATIVA)){
-            throw new RequisicaoInvalidaException("Status atual do chamado não permite deletar comentários.");
-        }
-        if(!comentario.getTecnicoId().equals(UUID.fromString(tecnicoId))){
-            throw new AcessoNegadoException("Você não tem permissão para deletar este comentário. Por gentileza assuma o chamado primeiro");
-        }
+        validator.validarAcessoDoTecnico(comentario.getChamado(), UUID.fromString(tecnicoId));
+
 
         comentarioRepository.delete(comentario);
     }

@@ -12,8 +12,8 @@ import aoomath.Chamado_Service.model.Status;
 import aoomath.Chamado_Service.rabbit.dto.NotificacaoMessage;
 import aoomath.Chamado_Service.rabbit.service.NotificacaoProducer;
 import aoomath.Chamado_Service.repository.ChamadoRepository;
-import aoomath.Chamado_Service.security.CustomJwtAuthentication;
 import aoomath.Chamado_Service.specification.ChamadoSpecification;
+import aoomath.Chamado_Service.validator.ChamadoValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,6 +31,7 @@ public class ChamadoService {
     private final ChamadoRepository repository;
     private final ChamadoMapper mapper;
     private final NotificacaoProducer notificacaoProducer;
+    private final ChamadoValidator validator;
 
     public ChamadoResponseDto criar (ChamadoRequestDto request, String id, String nome){
         Chamado novo = mapper.toEntity(request);
@@ -42,13 +43,13 @@ public class ChamadoService {
     }
 
 
-    public ChamadoResponseDto buscarPorId (UUID id, CustomJwtAuthentication auth){
+    public ChamadoResponseDto buscarPorId (UUID id,  String usuarioId, boolean isUser){
 
         Chamado chamado = repository.findById(id)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Chamado não encontrado"));
-        if(auth.hasRole("USER") && !chamado.getCriadorId().equals(UUID.fromString(auth.getId()))){
-            throw new AcessoNegadoException("Você não tem permissão para acessar este recurso");
-        }
+
+        validator.validarAcessoAoChamado(chamado, UUID.fromString(usuarioId), isUser);
+
         return mapper.toResponse(chamado);
     }
 
@@ -106,9 +107,7 @@ public class ChamadoService {
         Chamado chamado = repository.findById(chamadoId)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Chamado não encontrado"));
 
-        if(!chamado.getTecnicoId().equals(UUID.fromString(tecnicoId))){
-            throw new AcessoNegadoException("Você não tem permissão para concluir este chamado. Por gentileza assuma o chamado primeiro");
-        }
+        validator.validarAcessoDoTecnico(chamado, UUID.fromString(tecnicoId));
 
         chamado.setStatus(Status.CONCLUIDO);
         repository.save(chamado);
@@ -124,12 +123,7 @@ public class ChamadoService {
         Chamado chamado = repository.findById(id)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Chamado não encontrado"));
 
-        if(!chamado.getStatus().equals(Status.ABERTO)){
-            throw new RequisicaoInvalidaException("Chamado não pode ser removido, pois não está aberto.");
-        }
-        if(!chamado.getCriadorId().equals(UUID.fromString(criadorId))){
-            throw new AcessoNegadoException("Você não tem permissão para acessar este recurso");
-        }
+        validator.validarDelete(chamado, UUID.fromString(criadorId));
 
         repository.delete(chamado);
     }

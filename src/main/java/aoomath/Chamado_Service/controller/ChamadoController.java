@@ -41,7 +41,8 @@ public class ChamadoController {
      @ApiResponse(responseCode = "200", description = "Chamado encontrado")
      public ResponseEntity<ChamadoResponseDto> buscarPorId (@PathVariable UUID id, Authentication authentication){
          CustomJwtAuthentication auth = (CustomJwtAuthentication) authentication;
-         return ResponseEntity.ok(service.buscarPorId(id, auth));
+         boolean isUser = auth.hasRole("USER");
+         return ResponseEntity.ok(service.buscarPorId(id, auth.getId(), isUser));
      }
 
      @PreAuthorize("hasAnyRole('TECNICO', 'ADMIN')")
