@@ -32,9 +32,9 @@ public class ComentarioController {
     @PostMapping(path = "/chamado/{chamadoId}",consumes = "application/json")
     @Operation(summary = "Criar um novo comentário no chamado pelo ID informado. Necessário Role TECNICO")
     @ApiResponse(responseCode = "201", description = "Comentário criado com sucesso")
-    public ResponseEntity<ComentarioResponseDTO> salvar(@PathVariable UUID chamadoId, @RequestBody @Valid ComentarioRequestDTO dto, Authentication authentication){
+    public ResponseEntity<ComentarioResponseDTO> criar(@PathVariable UUID chamadoId, @RequestBody @Valid ComentarioRequestDTO dto, Authentication authentication){
         CustomJwtAuthentication auth = (CustomJwtAuthentication) authentication;
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.salvar(chamadoId,dto, auth.getNome(), auth.getId()));
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(chamadoId,dto, auth.getNome(), auth.getId()));
     }
 
     @GetMapping("/{id}")
@@ -60,10 +60,10 @@ public class ComentarioController {
         return ResponseEntity.ok(service.listarMeusComentarios(auth.getId(), page, size));
     }
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/tecnico/id")
+    @GetMapping("/tecnico/{id}")
     @Operation(summary = "Retornar todos os comentário do técnico pelo ID informado. Necessário Role ADMIN")
     @ApiResponse(responseCode = "200", description = "Comentários encontrados")
-    public ResponseEntity<Page<ComentarioResponseDTO>> listarPeloTecnicoId( UUID id, @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "10") int size){
+    public ResponseEntity<Page<ComentarioResponseDTO>> listarPeloTecnicoId( @PathVariable UUID id, @RequestParam(defaultValue = "0") int page,  @RequestParam(defaultValue = "10") int size){
         return ResponseEntity.ok(service.listarPeloTecnicoId(id, page, size));
     }
 

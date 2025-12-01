@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class ChamadoController {
      @PostMapping(consumes = "application/json")
      @Operation(summary = "Criar um novo chamado no sistema. Necessário Role USER")
      @ApiResponse(responseCode = "201", description = "Chamado criado com sucesso")
-     public ResponseEntity<ChamadoResponseDto> criar (@RequestBody ChamadoRequestDto request, Authentication authentication){
+     public ResponseEntity<ChamadoResponseDto> criar (@RequestBody @Valid ChamadoRequestDto request, Authentication authentication){
          CustomJwtAuthentication auth = (CustomJwtAuthentication) authentication;
          return ResponseEntity.status(HttpStatus.CREATED).body(service.criar(request,auth.getId(), auth.getNome()));
      }
@@ -86,7 +87,7 @@ public class ChamadoController {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página")
             @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Status do chamado", example= "ABERTO")
+            @Parameter(description = "Status do chamado", example= "EM_TRATATIVA")
             @RequestParam(required = false) String status,
             Authentication authentication){
 
@@ -120,7 +121,7 @@ public class ChamadoController {
             @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "Tamanho da página")
             @RequestParam(defaultValue = "10") int size,
-            @Parameter(description = "Status do chamado", example= "ABERTO")
+            @Parameter(description = "Status do chamado", example= "EM_TRATATIVA")
             @RequestParam(required = false) String status,
             @PathVariable UUID id ){
 
@@ -129,7 +130,7 @@ public class ChamadoController {
     }
 
     @PreAuthorize("hasRole('TECNICO')")
-    @PatchMapping(path = "/{chamadoId}/assumir", consumes = "application/json")
+    @PatchMapping(path = "/{chamadoId}/assumir")
     @Operation(summary = "Assumir a tratativa do chamado. Necessário Role TECNICO")
     @ApiResponse(responseCode = "200", description = "Chamado assumido com sucesso")
     public ResponseEntity<ChamadoResponseDto> assumirChamado (@PathVariable UUID chamadoId, Authentication authentication){
@@ -139,7 +140,7 @@ public class ChamadoController {
     }
 
     @PreAuthorize("hasAnyRole('TECNICO', 'ADMIN')")
-    @PatchMapping(path = "/{chamadoId}/concluir", consumes = "application/json")
+    @PatchMapping(path = "/{chamadoId}/concluir")
     @Operation(summary = "Concluir a tratativa do chamado. Necessário Role TECNICO ou ADMIN")
     @ApiResponse(responseCode = "200", description = "Chamado concluído com sucesso")
     public ResponseEntity<Void> concluirChamado (@PathVariable UUID chamadoId, Authentication authentication){

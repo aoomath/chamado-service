@@ -1,0 +1,6 @@
+spring:
+  rabbitmq:
+    host: ignored
+    port: 0
+    username: guest
+    password: guest

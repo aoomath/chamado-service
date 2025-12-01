@@ -35,7 +35,7 @@ public class ComentarioService {
 
 
 
-    public ComentarioResponseDTO salvar(UUID chamadoId, ComentarioRequestDTO dto, String nome, String id){
+    public ComentarioResponseDTO criar(UUID chamadoId, ComentarioRequestDTO dto, String nome, String id){
 
         Chamado chamado = chamadoRepository.findById(chamadoId)
                 .orElseThrow(()-> new RecursoNaoEncontradoException("Chamado não encontrado"));
@@ -61,7 +61,7 @@ public class ComentarioService {
 
     public ComentarioResponseDTO buscarPorId(UUID id){
         Comentario comentario = comentarioRepository.findById(id)
-                .orElseThrow(()-> new RecursoNaoEncontradoException("Comentario não encontrado"));
+                .orElseThrow(()-> new RecursoNaoEncontradoException("Comentário não encontrado"));
         return mapper.toResponse(comentario);
     }
 
@@ -89,7 +89,7 @@ public class ComentarioService {
 
     public void deletar(UUID comentarioId, String tecnicoId){
         Comentario comentario = comentarioRepository.findById(comentarioId)
-                .orElseThrow(()-> new RecursoNaoEncontradoException("Comentario não encontrado"));
+                .orElseThrow(()-> new RecursoNaoEncontradoException("Comentário não encontrado"));
 
         validator.validarAcessoDoTecnico(comentario.getChamado(), UUID.fromString(tecnicoId));
 

@@ -14,7 +14,7 @@ import lombok.Data;
 public class ComentarioRequestDTO {
 
     @Schema(description = "Conteúdo do comentário", example = "Teclado foi trocado em breve trago atualização sobre a compra do novo monitor")
-    @NotBlank(message = "O comentário da postagem é obrigatório")
+    @NotBlank(message = "O comentário do chamado é obrigatório")
     @Size(max = 255, message = "O conteúdo deve ter no máximo 255 caracteres")
     private String conteudo;
 }

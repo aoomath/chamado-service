@@ -21,7 +21,7 @@ public class ComentarioResponseDTO {
     private String conteudo;
     @Schema(description = "Data e hora de criação do comentário", example = "27/03/2024 11:25")
     @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
-    private LocalDateTime criacao;
+    private LocalDateTime criadoEm;
     @Schema(description = "Id do técnico que comentou no chamado", example = "3fa85f64-5717-4562-b3fc-2c963f66afa6")
     private UUID tecnicoId;
     @Schema(description = "Nome do técnico comentou no chamado", example = "Paulo")
