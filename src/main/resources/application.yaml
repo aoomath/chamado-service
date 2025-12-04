@@ -6,7 +6,7 @@ spring:
     name: Chamado-Service
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/Chamado
+    url: jdbc:postgresql://postgres-chamado:5432/Chamado
     username: postgres
     password: 123456
     driver-class-name: org.postgresql.Driver
@@ -24,7 +24,7 @@ spring:
     locations: classpath:db/migration
 
   rabbitmq:
-    host: localhost
+    host: rabbitmq
     port: 5672
     username: guest
     password: guest
