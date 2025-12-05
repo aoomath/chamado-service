@@ -1,7 +1,9 @@
-# 📝 Chamado Service — API de Chamados (Spring Boot + JWT + Feign)
+# 📝 Chamado Service — API de Chamados (Spring Boot + JWT + RabbitMQ)
 
 API responsável pelo **gerenciamento de chamados** no sistema HelpDesk.  
 Consome **JWT tokens** emitidos pelo serviço **Usuario Service** para autenticação e validação, publica mensagens na fila do **RabbitMQ**, e fornece documentação e monitoramento completos.
+
+Link do repositório com os manifests para rodar todos os serviços: https://github.com/aoomath/HelpDesk-K8s
 
 ---
 
@@ -42,7 +44,7 @@ Principais responsabilidades do serviço:
 | Framework   | Spring Boot 3                                   |
 | Segurança   | Spring Security + JWT                           |
 | Banco       | PostgreSQL (migrations)                         |
-| Comunicação | Feign Client, RabbitMQ                           |
+| Comunicação | RabbitMQ                           |
 | Testes      | JUnit 5, Mockito, Testcontainers, RestAssuredMockMvc |
 | DevOps      | Docker, Kubernetes                              |
 | Docs        | Swagger / OpenAPI, Actuator                     |
