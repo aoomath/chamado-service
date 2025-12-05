@@ -14,21 +14,44 @@ import org.springframework.context.annotation.Configuration;
 @OpenAPIDefinition(
         info = @Info(title = "Chamado Service", version = "v1",
                 description = """
-                Serviço responsável pelo gerenciamento de chamados no sistema.
-            
-                Segurança:
-                - Todos os endpoints exigem autenticação via token JWT.
-                - A autenticação é aplicada globalmente pelo SecurityConfig.
-                - O token JWT deve ser obtido no Usuario Service.
-                - As anotações @PreAuthorize são utilizadas apenas para definir permissões específicas
-                  (roles) por endpoint, como USER, TECNICO e ADMIN.
-            
-                Regras gerais de negócio:
-                1. Qualquer usuário autenticado pode visualizar seus próprios chamados.
-                2. Somente usuários com role USER podem criar e excluir chamados.
-                3. Somente técnicos podem assumir chamados e registrar comentários.
-                4. Técnicos e administradores podem listar chamados e consultar dados de outros usuários.
-                """)
+        Serviço responsável pelo gerenciamento de chamados no sistema.<br><br>
+
+        <b>Segurança:</b><br>
+        - Todos os endpoints exigem autenticação via token JWT.<br>
+        - A autenticação é aplicada globalmente pelo SecurityConfig.<br>
+        - O token JWT deve ser obtido no Usuario Service.<br>
+        - As anotações @PreAuthorize são utilizadas apenas para definir permissões específicas
+          (roles) por endpoint, como USER, TECNICO e ADMIN.<br><br>
+
+        <b>Papéis de Acesso (Roles)</b><br><br>
+
+        <b>USER</b><br>
+        - Cria chamados.<br>
+        - Exclui seus próprios chamados se estiverem ABERTOS.<br>
+        - Lista e consulta apenas seus chamados.<br><br>
+
+        <b>TECNICO</b><br><br>
+        <u>Chamados:</u><br>
+        - Lista todos os chamados.<br>
+        - Assume a tratativa.<br>
+        - Conclui chamados.<br>
+        - Lista chamados que assumiu.<br>
+        - Consulta chamados de qualquer usuário.<br><br>
+
+        <u>Comentários:</u><br>
+        - Cria comentários em chamados.<br>
+        - Lista e exclui seus próprios comentários.<br><br>
+
+        <b>ADMIN</b><br>
+        - Lista todos os chamados.<br>
+        - Conclui chamados.<br>
+        - Consulta chamados por criador ou técnico.<br>
+        - Lista comentários de qualquer técnico.<br><br>
+
+        <b>Observação:</b><br><br>
+        ADMIN não cria, assume, comenta ou exclui chamados. Seu papel é supervisão e auditoria.
+        """
+        )
 )
 public class OpenApiConfig {
 
